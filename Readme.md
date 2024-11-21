@@ -32,3 +32,6 @@ Proyek ini merupakan analisis data e-commerce menggunakan Python dan Streamlit. 
 
 
 4. Upload dataset yang diperlukan pada sidebar aplikasi.
+
+
+Note: Jika Error gdown muncul, ketik `pip install gdown` di Terminal Visual Studio (VS) untuk hilangin.
