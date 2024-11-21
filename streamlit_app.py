@@ -3,11 +3,15 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import gdown
+import requests
 
-url = "https://drive.google.com/file/d/10qUFPUnNzo8uRaJ6HDLgueio1q1TBHAf/"
-output = "main_data.csv"
-gdown.download(url, output, quiet=False)
+# Gantilah dengan URL Dropbox Anda
+url = "https://www.dropbox.com/scl/fi/mf9xmr8z6ncmtg0agqu9i/main_data.csv?rlkey=9dvwoh78adwp1918sv234krtu&st=h1uq9rge&dl=0"
+response = requests.get(url)
+
+# Simpan file yang diunduh
+with open("main_data.csv", "wb") as f:
+    f.write(response.content)
 
 # Set page configuration
 st.set_page_config(page_title="Dashboard E-Commerce", layout="wide")
