@@ -1,1 +1,34 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"provenance":[],"authorship_tag":"ABX9TyMC+entafn2tDQDPKtkX+Qt"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"markdown","source":["# E-Commerce Data Analysis Dashboard\n","\n","## Deskripsi\n","Proyek ini merupakan analisis data e-commerce menggunakan Python dan Streamlit. Dashboard interaktif dirancang untuk membantu visualisasi dan analisis data pelanggan, pesanan, dan item pesanan.\n","\n","## Fitur Dashboard\n","1. **Upload Dataset:**\n","   - `customers_dataset.csv`\n","   - `orders_dataset.csv`\n","   - `order_items_dataset.csv`\n","2. **Informasi Dataset:**\n","   - Menampilkan jumlah baris dan kolom di masing-masing dataset.\n","   - Menampilkan sampel data.\n","3. **Analisis dan Visualisasi:**\n","   - Distribusi pelanggan berdasarkan negara bagian.\n","   - Total dan rata-rata nilai pesanan.\n","   - Histogram distribusi harga pesanan.\n","\n","## Persyaratan\n","- Python 3.7 atau lebih baru.\n","- Library yang digunakan (lihat [requirements.txt](requirements.txt)).\n","\n","## Cara Menjalankan\n","1. Clone repository ini ke lokal:\n","   `bash\n","   git clone <URL_REPO>\n","   cd <NAMA_FOLDER_REPO>`\n","2.Install library yang diperlukan:\n","bash\n","Salin kode\n","`pip install -r requirements.txt`\n","3.Jalankan aplikasi Streamlit:\n","bash\n","Salin kode\n","`streamlit run streamlit_dashboard.py`\n","4.Upload dataset yang diperlukan pada sidebar aplikasi."],"metadata":{"id":"y3b5hO37t9_L"}}]}
+# E-Commerce Data Analysis Dashboard
+
+## Deskripsi
+Proyek ini merupakan analisis data e-commerce menggunakan Python dan Streamlit. Dashboard interaktif dirancang untuk membantu visualisasi dan analisis data pelanggan, pesanan, dan item pesanan.
+
+## Fitur Dashboard
+1. **Upload Dataset:**
+   - `customers_dataset.csv`
+   - `orders_dataset.csv`
+   - `order_items_dataset.csv`
+2. **Informasi Dataset:**
+   - Menampilkan jumlah baris dan kolom di masing-masing dataset.
+   - Menampilkan sampel data.
+3. **Analisis dan Visualisasi:**
+   - Distribusi pelanggan berdasarkan negara bagian.
+   - Total dan rata-rata nilai pesanan.
+   - Histogram distribusi harga pesanan.
+
+## Persyaratan
+- Python 3.7 atau lebih baru.
+- Library yang digunakan (lihat file `requirements.txt`).
+
+## Cara Menjalankan
+1. Clone repository ini ke lokal:
+`git clone <URL_REPO> cd <NAMA_FOLDER_REPO>`
+
+2. Install library yang diperlukan:
+`pip install -r requirements.txt`
+
+3. Jalankan aplikasi Streamlit:
+`streamlit run streamlit_dashboard.py`
+
+
+4. Upload dataset yang diperlukan pada sidebar aplikasi.
