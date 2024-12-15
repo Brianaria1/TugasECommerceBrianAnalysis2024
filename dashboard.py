@@ -1,23 +1,24 @@
-import streamlit as st
+import os
+import gdown
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import gdown  # Pustaka untuk mendownload file dari Google Drive
+import streamlit as st
 
 # Fungsi untuk memuat data dari Google Drive
-@st.cache_data
+@st.cache_data(persist="disk")
 def load_data():
     # ID file dari Google Drive
-    file_id = "1KeLL573qhSjHyiC4X5gAeaQ8qiSsgjui"  # ID dari link saya
+    file_id = "1KeLL573qhSjHyiC4X5gAeaQ8qiSsgjui"  # File ID dari link Anda
     url = f"https://drive.google.com/uc?id={file_id}"  # URL untuk unduh file
     output = "order_data_clean.csv"  # Nama file lokal setelah diunduh
     
-    # Mendownload file dari Google Drive
-    gdown.download(url, output, quiet=False)
+    # Jika file belum ada, unduh dari Google Drive
+    if not os.path.exists(output):
+        gdown.download(url, output, quiet=False)
     
-    # Membaca file CSV yang sudah diunduh
-    order_data_clean = pd.read_csv(output)
-    return order_data_clean
+    # Membaca file CSV
+    return pd.read_csv(output)
 
 # Memuat dataset
 st.title("Dashboard E-Commerce Brasil")
@@ -51,10 +52,7 @@ with tab1:
     # Visualisasi
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    # Plot Kategori Produk dengan Penjualan Tertinggi
     sns.barplot(x=top_5_categories.index, y=top_5_categories.values, ax=ax, color="green", label="Tertinggi")
-    
-    # Plot Kategori Produk dengan Penjualan Terendah
     sns.barplot(x=bottom_5_categories.index, y=bottom_5_categories.values, ax=ax, color="red", label="Terendah")
     
     plt.title("Kategori Produk dengan Penjualan Tertinggi dan Terendah")
@@ -90,11 +88,9 @@ with tab3:
     st.header("Segmentasi Pelanggan")
     st.write("Menampilkan segmentasi pelanggan berdasarkan RFM (Recency, Frequency, Monetary).")
     
-    # Tabel contoh segmentasi
     sample_rfm = data[["customer_id", "recency", "frequency", "monetary", "segment"]].head(10)
     st.dataframe(sample_rfm)
 
-    # Visualisasi segmentasi
     segment_count = data["segment"].value_counts()
     fig, ax = plt.subplots()
     segment_count.plot(kind="bar", color="skyblue", ax=ax)
@@ -108,7 +104,6 @@ with tab4:
     st.header("Clustering Pelanggan")
     st.write("Visualisasi clustering berdasarkan jumlah transaksi dan rata-rata durasi pengiriman.")
     
-    # Scatter plot clustering
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
         x=data["transaction_count"],
