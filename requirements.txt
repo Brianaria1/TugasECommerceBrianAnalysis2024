@@ -4,6 +4,6 @@ matplotlib==3.7.2
 seaborn==0.12.2
 streamlit==1.25.0
 gdown==4.7.1
-pillow>=10.0.0
+pillow>=7.1.0,<10
 setuptools>=68.0.0
 wheel>=0.41.0
