@@ -1,35 +1,32 @@
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import requests  # Untuk mengunduh dataset dari Dropbox
-import zipfile  # Untuk mengekstrak file ZIP
-import os  # Untuk memeriksa file yang sudah diunduh
-
-# Fungsi untuk memuat data dari Dropbox
 @st.cache_data
 def load_data():
-    # URL Dropbox
-    url = "https://www.dropbox.com/scl/fi/pdmdf8mhp399cjww3bqd2/order_data_clean.zip?rlkey=8yvp5undp57m4xtqz2x4v7jzy&st=ivvqzjvc&dl=1"
-    zip_file = "order_data_clean.zip"  # Nama file ZIP
-    csv_file = "order_data_clean.csv"  # Nama file CSV dalam ZIP
+    try:
+        # URL Dropbox
+        url = "https://www.dropbox.com/scl/fi/pdmdf8mhp399cjww3bqd2/order_data_clean.zip?rlkey=8yvp5undp57m4xtqz2x4v7jzy&st=ivvqzjvc&dl=1"
+        zip_file = "order_data_clean.zip"  
+        csv_file = "order_data_clean.csv"
 
-    # Periksa apakah file CSV sudah ada
-    if not os.path.exists(csv_file):
-        # Unduh file ZIP dari Dropbox
-        with requests.get(url, stream=True) as r:
-            r.raise_for_status()
-            with open(zip_file, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
+        # Periksa apakah file CSV sudah ada
+        if not os.path.exists(csv_file):
+            st.info("Mengunduh dataset...")
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(zip_file, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
 
-        # Ekstrak file ZIP
-        with zipfile.ZipFile(zip_file, "r") as z:
-            z.extractall()
+            # Ekstrak file ZIP
+            with zipfile.ZipFile(zip_file, "r") as z:
+                z.extractall()
 
-    # Membaca file CSV
-    order_data_clean = pd.read_csv(csv_file)
-    return order_data_clean
+        # Membaca file CSV
+        order_data_clean = pd.read_csv(csv_file)
+        return order_data_clean
+    
+    except Exception as e:
+        st.error(f"Gagal memuat dataset: {e}")
+        return pd.DataFrame()  # Return DataFrame kosong
+
 
 # Memuat dataset
 st.title("Dashboard E-Commerce Brasil")
