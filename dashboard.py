@@ -8,7 +8,7 @@ import gdown  # Pustaka untuk mendownload file dari Google Drive
 @st.cache_data
 def load_data():
     # ID file dari Google Drive
-    file_id = "1KeLL573qhSjHyiC4X5gAeaQ8qiSsgjui"  # ID dari link Anda
+    file_id = "1KeLL573qhSjHyiC4X5gAeaQ8qiSsgjui"  # ID dari link saya
     url = f"https://drive.google.com/uc?id={file_id}"  # URL untuk unduh file
     output = "order_data_clean.csv"  # Nama file lokal setelah diunduh
     
