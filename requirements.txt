@@ -5,4 +5,3 @@ seaborn==0.12.2
 streamlit==1.25.0
 requests==2.31.0
 gdown==4.7.1
-zipfile36==0.1.4
