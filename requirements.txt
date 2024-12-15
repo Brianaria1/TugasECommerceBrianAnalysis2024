@@ -1,10 +1,8 @@
 pandas==1.5.3
-numpy==1.25.0
+numpy>=1.26.0
 matplotlib==3.7.2
 seaborn==0.12.2
 streamlit==1.25.0
 jupyter==1.0.0
 setuptools>=68.0.0 
 wheel>=0.41.0 
-streamlit
-gdown
