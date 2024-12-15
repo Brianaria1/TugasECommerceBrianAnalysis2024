@@ -1,30 +1,35 @@
-import os
-import gdown
+import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import streamlit as st
+import zipfile
+import requests
 
-# Fungsi untuk memuat data dari Google Drive
-@st.cache_data(persist="disk")
-def load_data():
-    # ID file dari Google Drive
-    file_id = "1KeLL573qhSjHyiC4X5gAeaQ8qiSsgjui"  # File ID dari link saya
-    url = f"https://drive.google.com/uc?id={file_id}"  # URL untuk unduh file
-    output = "order_data_clean.csv"  # Nama file lokal setelah diunduh
-    
-    # Jika file belum ada, unduh dari Google Drive
-    if not os.path.exists(output):
-        gdown.download(url, output, quiet=False)
-    
-    # Membaca file CSV
-    return pd.read_csv(output)
+# Fungsi untuk mengunduh dan mengekstrak file ZIP dari Dropbox
+@st.cache_data
+def download_and_extract_zip(url, output_csv):
+    zip_path = "order_data_clean.zip"  # Nama file lokal untuk ZIP
+    # Unduh file dari Dropbox
+    with requests.get(url, stream=True) as r:
+        with open(zip_path, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+    # Ekstrak file ZIP
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extract(output_csv)  # Ekstrak file CSV
+
+    # Membaca CSV setelah diekstrak
+    return pd.read_csv(output_csv)
+
+# URL Dropbox
+dropbox_url = "https://www.dropbox.com/scl/fi/pdmdf8mhp399cjww3bqd2/order_data_clean.zip?rlkey=8yvp5undp57m4xtqz2x4v7jzy&st=ivvqzjvc&dl=1"
+csv_name = "order_data_clean.csv"
 
 # Memuat dataset
 st.title("Dashboard E-Commerce Brasil")
 st.write("Dashboard ini memberikan wawasan dari data e-commerce Brasil berdasarkan hasil analisis.")
-
-data = load_data()
+data = download_and_extract_zip(dropbox_url, csv_name)
 
 # Tab navigasi
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
@@ -52,7 +57,10 @@ with tab1:
     # Visualisasi
     fig, ax = plt.subplots(figsize=(10, 6))
     
+    # Plot Kategori Produk dengan Penjualan Tertinggi
     sns.barplot(x=top_5_categories.index, y=top_5_categories.values, ax=ax, color="green", label="Tertinggi")
+    
+    # Plot Kategori Produk dengan Penjualan Terendah
     sns.barplot(x=bottom_5_categories.index, y=bottom_5_categories.values, ax=ax, color="red", label="Terendah")
     
     plt.title("Kategori Produk dengan Penjualan Tertinggi dan Terendah")
@@ -88,9 +96,11 @@ with tab3:
     st.header("Segmentasi Pelanggan")
     st.write("Menampilkan segmentasi pelanggan berdasarkan RFM (Recency, Frequency, Monetary).")
     
+    # Tabel contoh segmentasi
     sample_rfm = data[["customer_id", "recency", "frequency", "monetary", "segment"]].head(10)
     st.dataframe(sample_rfm)
 
+    # Visualisasi segmentasi
     segment_count = data["segment"].value_counts()
     fig, ax = plt.subplots()
     segment_count.plot(kind="bar", color="skyblue", ax=ax)
@@ -104,6 +114,7 @@ with tab4:
     st.header("Clustering Pelanggan")
     st.write("Visualisasi clustering berdasarkan jumlah transaksi dan rata-rata durasi pengiriman.")
     
+    # Scatter plot clustering
     plt.figure(figsize=(10, 6))
     sns.scatterplot(
         x=data["transaction_count"],
