@@ -1,3 +1,11 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests  # Untuk mengunduh dataset dari Dropbox
+import zipfile  # Untuk mengekstrak file ZIP
+import os  # Untuk memeriksa file yang sudah diunduh
+
 @st.cache_data
 def load_data():
     try:
