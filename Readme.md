@@ -39,7 +39,7 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
      ```
    - Jalankan aplikasi Streamlit dengan perintah:
      ```bash
-     streamlit run app.py
+     streamlit run dashboard.py
      ```
 
 3. **Dataset:**
@@ -52,7 +52,7 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 
 ```plaintext
 .
-├── app.py               # File utama aplikasi Streamlit
+├── dashboard.py               # File utama aplikasi Streamlit
 ├── requirements.txt     # Daftar pustaka yang dibutuhkan
 ├── README.md            # Dokumentasi aplikasi
 ```
@@ -78,7 +78,7 @@ Dataset yang digunakan berisi data e-commerce Brasil dan diunduh dari Google Dri
 ## Catatan
 
 - Pastikan dataset memiliki struktur kolom yang sesuai dengan analisis dalam aplikasi.
-- Jika terdapat masalah dengan file dataset, pastikan ID file di `app.py` sudah benar.
+- Jika terdapat masalah dengan file dataset, pastikan ID file di `dashboard.py` sudah benar.
 
 ---
 
