@@ -2,51 +2,31 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import requests  # Untuk mengunduh dataset dari Dropbox
-import os  # Untuk memeriksa file yang sudah diunduh
 
+# Fungsi untuk memuat data dari file unggahan
 @st.cache_data
-def load_data(uploaded_file=None):
+def load_data(uploaded_file):
     try:
-        csv_file = "processed_order_data.csv.gz"  # Nama file GZIP lokal
-        dropbox_url = "https://www.dropbox.com/scl/fi/tkzrpbbtgh4yqvu6dnu9c/processed_order_data.csv.gz?rlkey=0zjd9jgvv41fgku8tipbn8m33&st=90an6u6k&dl=1"
-        
-        # Jika file di-upload, gunakan file tersebut
-        if uploaded_file:
-            st.info("Dataset diupload secara manual.")
-            data = pd.read_csv(uploaded_file, compression='gzip')
-            return data
-        
-        # Periksa apakah file GZIP sudah ada di lokal
-        if not os.path.exists(csv_file):
-            st.info("Mengunduh dataset dari Dropbox...")
-            with requests.get(dropbox_url, stream=True) as r:
-                r.raise_for_status()
-                with open(csv_file, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        f.write(chunk)
-
-        # Membaca file CSV terkompresi
-        st.info("Memuat dataset...")
-        data = pd.read_csv(csv_file, compression='gzip')
-        return data
-    
+        # Membaca file CSV langsung dari file uploader (format GZIP)
+        order_data_clean = pd.read_csv(uploaded_file, compression='gzip')
+        return order_data_clean
     except Exception as e:
         st.error(f"Gagal memuat dataset: {e}")
-        return pd.DataFrame()  # Return DataFrame kosong
+        return pd.DataFrame()
 
-
-# Memuat dataset
+# Judul aplikasi
 st.title("Dashboard E-Commerce Brasil")
 st.write("Dashboard ini memberikan wawasan dari data e-commerce Brasil berdasarkan hasil analisis.")
 
-uploaded_file = st.file_uploader("Upload dataset (GZIP format):", type=["gz"])
-data = load_data(uploaded_file)
+# File uploader untuk dataset
+uploaded_file = st.file_uploader("Unggah file dataset (GZIP format)", type=["csv", "gz"])
 
-if data.empty:
-    st.warning("Dataset belum dimuat. Harap periksa file atau koneksi Anda.")
-else:
-    # Tab navigasi
+if uploaded_file is not None:
+    # Memuat dataset jika file diunggah
+    data = load_data(uploaded_file)
+    st.success("Dataset berhasil dimuat!")
+
+    # Tab navigasi untuk analisis
     tab1, tab2, tab3, tab4, tab5 = st.tabs(
         ["Kategori Produk", "Durasi Pengiriman", "Segmentasi Pelanggan", "Clustering", "Ringkasan"]
     )
@@ -55,21 +35,25 @@ else:
     with tab1:
         st.header("Identifikasi 5 Kategori Produk dengan Penjualan Tertinggi dan Terendah")
         st.write("Menampilkan kategori produk dengan jumlah penjualan tertinggi dan terendah.")
-        
-        product_sales = data.groupby("product_category_name")["price"].count().sort_values(ascending=False)
+
+        # Analisis kategori produk
+        product_sales = data.groupby("product_category_name").size().sort_values(ascending=False)
         top_5_categories = product_sales.head(5)
         bottom_5_categories = product_sales.tail(5)
 
         st.subheader("5 Kategori Produk dengan Penjualan Tertinggi")
         st.write(top_5_categories)
-        
+
         st.subheader("5 Kategori Produk dengan Penjualan Terendah")
         st.write(bottom_5_categories)
-        
+
+        # Visualisasi
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.barplot(x=top_5_categories.index, y=top_5_categories.values, ax=ax, color="green", label="Tertinggi")
         sns.barplot(x=bottom_5_categories.index, y=bottom_5_categories.values, ax=ax, color="red", label="Terendah")
         plt.title("Kategori Produk dengan Penjualan Tertinggi dan Terendah")
+        plt.xlabel("Kategori Produk")
+        plt.ylabel("Jumlah Penjualan")
         plt.xticks(rotation=45)
         plt.legend()
         st.pyplot(fig)
@@ -77,51 +61,75 @@ else:
     # 2. Durasi Pengiriman
     with tab2:
         st.header("Analisis Durasi Pengiriman")
-        data["delivery_duration"] = pd.to_datetime(data["order_delivered_customer_date"]) - pd.to_datetime(data["order_purchase_timestamp"])
-        data["delivery_duration"] = data["delivery_duration"].dt.days
-        
-        st.write("Rata-rata Durasi Pengiriman:", data["delivery_duration"].mean())
-        
-        longest_delivery = data.loc[data["delivery_duration"].idxmax()]
-        st.subheader("Pengiriman Terlama")
-        st.write(longest_delivery[["order_id", "delivery_duration"]])
+        st.write("Menampilkan distribusi durasi pengiriman dan pengiriman terlama.")
 
-        plt.figure(figsize=(8, 4))
-        sns.histplot(data["delivery_duration"], bins=30, kde=True, color="green")
+        data['delivery_duration'] = (pd.to_datetime(data['order_delivered_customer_date']) -
+                                     pd.to_datetime(data['order_purchase_timestamp'])).dt.days
+
+        avg_delivery = data['delivery_duration'].mean()
+        st.write(f"Rata-rata durasi pengiriman: {avg_delivery:.2f} hari")
+
+        longest_delivery = data.loc[data['delivery_duration'].idxmax()]
+        st.write(f"Pengiriman Terlama: {longest_delivery['delivery_duration']} hari")
+        st.write(f"Koordinat: ({longest_delivery['geolocation_lat']}, {longest_delivery['geolocation_lng']})")
+
+        # Visualisasi
+        plt.figure(figsize=(10, 6))
+        sns.histplot(data['delivery_duration'], bins=30, kde=True, color="green")
         plt.title("Distribusi Durasi Pengiriman")
-        plt.xlabel("Durasi Pengiriman (hari)")
+        plt.xlabel("Durasi Pengiriman (Hari)")
+        plt.ylabel("Frekuensi")
         st.pyplot(plt)
 
     # 3. Segmentasi Pelanggan
     with tab3:
-        st.header("Segmentasi Pelanggan Berdasarkan RFM")
-        data["recency"] = (pd.Timestamp.now() - pd.to_datetime(data["order_purchase_timestamp"])).dt.days
-        frequency = data.groupby("customer_id").size()
-        monetary = data.groupby("customer_id")["price"].sum()
-        rfm = pd.DataFrame({"frequency": frequency, "monetary": monetary}).reset_index()
+        st.header("Segmentasi Pelanggan")
+        st.write("Menampilkan segmentasi pelanggan berdasarkan RFM (Recency, Frequency, Monetary).")
 
-        st.write("Contoh Segmentasi RFM:")
-        st.dataframe(rfm.head(10))
+        # Menghitung Recency, Frequency, dan Monetary
+        recency = (pd.to_datetime("today") - pd.to_datetime(data.groupby('customer_id')['order_purchase_timestamp'].max())).dt.days
+        frequency = data.groupby('customer_id').size()
+        monetary = data.groupby('customer_id')['price'].sum()
+
+        rfm = pd.DataFrame({'Recency': recency, 'Frequency': frequency, 'Monetary': monetary})
+
+        # Visualisasi distribusi segmen
+        st.write(rfm.head())
+        sns.scatterplot(x='Frequency', y='Monetary', hue='Recency', data=rfm, palette='viridis')
+        plt.title("Segmentasi Pelanggan Berdasarkan RFM")
+        plt.xlabel("Frequency")
+        plt.ylabel("Monetary")
+        st.pyplot(plt)
 
     # 4. Clustering
     with tab4:
         st.header("Clustering Pelanggan")
-        transaction_count = data.groupby("customer_id")["order_id"].count().reset_index()
-        avg_delivery_duration = data.groupby("customer_id")["delivery_duration"].mean().reset_index()
-        merged_data = pd.merge(transaction_count, avg_delivery_duration, on="customer_id")
-        st.write("Contoh Data Clustering:")
-        st.dataframe(merged_data.head())
+        st.write("Visualisasi clustering berdasarkan jumlah transaksi dan rata-rata durasi pengiriman.")
+
+        # Clustering sederhana (manual)
+        cluster_conditions = [
+            (data['delivery_duration'] < 10) & (data['price'] > 500),
+            (data['delivery_duration'] >= 10) & (data['price'] <= 500)
+        ]
+        cluster_labels = ['Cepat & Mahal', 'Lambat & Murah']
+        data['cluster'] = pd.cut(data['price'], bins=[0, 500, float('inf')], labels=cluster_labels)
+
+        # Visualisasi clustering
+        sns.scatterplot(x='delivery_duration', y='price', hue='cluster', data=data, palette='Set2')
+        plt.title("Clustering Pelanggan")
+        plt.xlabel("Durasi Pengiriman (Hari)")
+        plt.ylabel("Harga")
+        st.pyplot(plt)
 
     # 5. Ringkasan
     with tab5:
         st.header("Ringkasan Analisis")
         st.write("""
         - **Kategori Produk:** Menampilkan kategori produk dengan penjualan tertinggi dan terendah.
-        - **Durasi Pengiriman:** Sebagian besar pengiriman dilakukan dalam waktu singkat.
-        - **Segmentasi Pelanggan:** Mengelompokkan pelanggan berdasarkan metrik RFM.
-        - **Clustering:** Membagi pelanggan berdasarkan transaksi dan durasi pengiriman.
+        - **Durasi Pengiriman:** Sebagian besar pengiriman selesai dalam waktu rata-rata 11 hari.
+        - **Segmentasi Pelanggan:** Visualisasi data RFM untuk memahami pelanggan.
+        - **Clustering:** Mengelompokkan pelanggan berdasarkan pola pengiriman dan harga.
         """)
 
-# Footer
-st.sidebar.title("Informasi")
-st.sidebar.info("Dashboard ini mendukung upload dataset manual (format GZIP) atau unduhan otomatis dari Dropbox.")
+else:
+    st.warning("Silakan unggah file dataset terlebih dahulu untuk melanjutkan.")
