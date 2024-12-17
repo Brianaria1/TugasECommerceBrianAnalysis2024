@@ -1,29 +1,28 @@
-# **Dashboard E-Commerce Brasil**
+# **Dashboard Analisis E-Commerce Brasil**
 
-Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan beberapa aspek utama, seperti kategori produk, durasi pengiriman, segmentasi pelanggan, dan clustering. Tujuannya adalah memberikan wawasan mendalam untuk membantu pengambilan keputusan strategis.
+Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan beberapa aspek utama, seperti kategori produk, tren penjualan, dan distribusi tipe pembayaran. Tujuannya adalah memberikan wawasan mendalam terkait produk yang terjual dengan baik dan pola pembayaran yang digunakan oleh pelanggan, untuk mendukung pengambilan keputusan strategis.
 
 ---
 
 ## **Fitur Dashboard**
 
-### 1. **Kategori Produk**
-- Menampilkan 5 kategori produk dengan jumlah penjualan tertinggi dan terendah.
+### 1.1 **Kategori Produk**
+- Menampilkan kategori produk dengan penjualan tertinggi dan terendah.
 - Visualisasi berupa bar chart untuk mempermudah analisis pola penjualan.
 
-### 2. **Durasi Pengiriman**
-- Menampilkan distribusi durasi pengiriman dalam histogram.
-- Informasi pengiriman terlama termasuk ID pesanan dan lokasi asal serta tujuan pengiriman.
+### 1.2 **Tren Penjualan**
+- Menampilkan tren penjualan selama beberapa tahun terakhir menggunakan garis waktu.
+- Visualisasi untuk memahami perubahan penjualan dari tahun ke tahun.
 
-### 3. **Segmentasi Pelanggan**
-- Menggunakan pendekatan RFM (Recency, Frequency, Monetary) untuk mengelompokkan pelanggan ke dalam segmen tertentu.
-- Menampilkan distribusi segmen pelanggan dalam bentuk bar chart.
+### 2.1 **Distribusi Tipe Pembayaran**
+- Menampilkan distribusi berbagai tipe pembayaran yang digunakan oleh pelanggan.
+- Bar chart untuk memudahkan pemahaman tipe pembayaran yang paling sering digunakan.
 
-### 4. **Clustering**
-- Visualisasi hasil clustering pelanggan berdasarkan jumlah transaksi dan rata-rata durasi pengiriman.
-- Scatter plot dengan warna berbeda untuk setiap cluster.
+### 2.2 **Tipe Pembayaran Paling Populer**
+- Menampilkan tipe pembayaran yang paling sering digunakan oleh pelanggan.
 
-### 5. **Ringkasan Analisis**
-- Rangkuman temuan dari analisis yang dilakukan, meliputi kategori produk, durasi pengiriman, segmentasi pelanggan, dan clustering.
+### **Ringkasan Analisis**
+- Rangkuman temuan dari analisis yang dilakukan, meliputi kategori produk, tren penjualan, dan distribusi tipe pembayaran.
 
 ---
 
@@ -34,13 +33,9 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 - Pustaka yang dibutuhkan:
   - `streamlit`
   - `pandas`
-  - `numpy`
   - `matplotlib`
   - `seaborn`
-  - `requests`
-  - `zipfile36`
-  - **`setuptools`**
-  - **`wheel`**
+  - `numpy`
 
 ### 2. **Langkah-Langkah**
 1. Clone repositori ini atau unduh file zip-nya.
@@ -54,8 +49,15 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
    ```
 
 ### 3. **Dataset**
-- Dataset diunduh secara otomatis dari **Dropbox** menggunakan pustaka `requests` dan diekstrak menggunakan `zipfile36`.
-- Pastikan koneksi internet aktif saat pertama kali menjalankan aplikasi untuk mengunduh dataset.
+- Siapkan dataset Anda dalam format CSV yang memiliki kolom berikut:
+  - `order_id`
+  - `customer_id`
+  - `order_status`
+  - `order_purchase_timestamp`
+  - `product_category_name`
+  - `price`
+  - `payment_type`
+- Unggah file `main_data.csv` untuk dianalisis dalam dashboard.
 
 ---
 
@@ -76,32 +78,23 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 - **Streamlit**: Untuk membangun antarmuka dashboard.
 - **Matplotlib & Seaborn**: Untuk visualisasi data.
 - **Pandas & NumPy**: Untuk manipulasi data.
-- **Requests**: Untuk mengunduh dataset dari Dropbox.
-- **Zipfile36**: Untuk mengekstrak file ZIP.
-- **Setuptools & Wheel**: Untuk mendukung instalasi pustaka Python.
-
----
-
-## **Dataset**
-
-Dataset yang digunakan berisi data e-commerce Brasil dan diunduh dari Dropbox:
-**[order_data_clean.zip](https://www.dropbox.com/scl/fi/pdmdf8mhp399cjww3bqd2/order_data_clean.zip?rlkey=8yvp5undp57m4xtqz2x4v7jzy&st=ivvqzjvc&dl=0)**.
 
 ---
 
 ## **Catatan**
 
-- Pastikan dataset memiliki struktur kolom yang sesuai dengan analisis dalam aplikasi.
-- Jika terjadi masalah saat mengunduh dataset, periksa URL Dropbox di dalam `dashboard.py`.
+- Pastikan dataset yang digunakan memiliki struktur kolom yang sesuai dengan analisis dalam aplikasi.
+- Jika Anda mengalami kesulitan dalam mengunggah file CSV atau menemukan masalah teknis lainnya, pastikan format data Anda sesuai dengan yang dijelaskan pada bagian *Dataset*.
 
 ---
 
 ## **Kontribusi**
 
-Kontribusi untuk meningkatkan dashboard ini dipersilakan! Silakan buka _pull request_ atau diskusikan ide Anda melalui _issue tracker_.
+Kontribusi untuk meningkatkan dashboard ini sangat diterima! Silakan buka _pull request_ atau diskusikan ide Anda melalui _issue tracker_.
 
 ---
 
 ## **Lisensi**
 
-Aplikasi ini dilisensikan di bawah [MIT License](LICENSE). 
+Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
+```
