@@ -97,4 +97,3 @@ Kontribusi untuk meningkatkan dashboard ini sangat diterima! Silakan buka _pull 
 ## **Lisensi**
 
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
-```
