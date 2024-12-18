@@ -8,7 +8,7 @@ import numpy as np
 st.title('Analisis E-Commerce: Penjualan Produk dan Pembayaran')
 
 # Fungsi untuk memuat data setelah upload
-@st.cache
+@st.cache_data
 def load_data(uploaded_file):
     # Memuat data dari CSV
     main_data = pd.read_csv(uploaded_file, parse_dates=["order_purchase_timestamp"])
