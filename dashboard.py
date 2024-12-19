@@ -16,6 +16,9 @@ def load_data_from_dropbox():
 # Memuat data dari Dropbox
 main_data = load_data_from_dropbox()
 
+# Pastikan kolom tanggal sudah dalam format datetime
+main_data['order_purchase_timestamp'] = pd.to_datetime(main_data['order_purchase_timestamp'], errors='coerce')
+
 # Menampilkan data beberapa baris pertama
 st.write(main_data.head())
 
