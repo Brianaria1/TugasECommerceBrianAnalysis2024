@@ -21,24 +21,24 @@ st.write(main_data.head())
 
 # Fitur interaktif: Filter berdasarkan rentang tanggal
 st.subheader("Filter Data berdasarkan Rentang Tanggal")
-min_date = main_data['order_purchase_timestamp'].min().date()  # Konversi ke datetime.date
-max_date = main_data['order_purchase_timestamp'].max().date()  # Konversi ke datetime.date
+min_date = main_data['order_purchase_timestamp'].min()
+max_date = main_data['order_purchase_timestamp'].max()
 
 # Membuat slider untuk memilih rentang tanggal
 start_date, end_date = st.slider(
     "Pilih Rentang Tanggal:",
-    min_value=min_date,
-    max_value=max_date,
-    value=(min_date, max_date)
+    min_value=min_date.to_pydatetime(),
+    max_value=max_date.to_pydatetime(),
+    value=(min_date.to_pydatetime(), max_date.to_pydatetime())
 )
 
 # Filter data berdasarkan rentang tanggal yang dipilih
 filtered_data = main_data[
-    (main_data['order_purchase_timestamp'] >= pd.Timestamp(start_date)) &
-    (main_data['order_purchase_timestamp'] <= pd.Timestamp(end_date))
+    (main_data['order_purchase_timestamp'] >= start_date) &
+    (main_data['order_purchase_timestamp'] <= end_date)
 ]
 
-st.write(f"Menampilkan data untuk rentang tanggal: {start_date} hingga {end_date}")
+st.write(f"Menampilkan data untuk rentang tanggal: {start_date.date()} hingga {end_date.date()}")
 st.write(filtered_data)
 
 # --- Analisis 1: Kategori Produk dengan Penjualan Tertinggi dan Terendah ---
@@ -79,7 +79,7 @@ else:
 
 # 1.2: Tren Penjualan Produk berdasarkan Tahun
 st.subheader("1.2: Tren Penjualan Produk berdasarkan Tahun")
-filtered_data['year'] = filtered_data['order_purchase_timestamp'].dt.year
+filtered_data.loc[:, 'year'] = filtered_data['order_purchase_timestamp'].dt.year  # Menggunakan .loc untuk menghindari SettingWithCopyWarning
 yearly_sales = filtered_data.groupby('year')['price'].sum()
 
 if not yearly_sales.empty:
