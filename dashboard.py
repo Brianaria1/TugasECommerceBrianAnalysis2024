@@ -16,9 +16,6 @@ def load_data_from_dropbox():
 # Memuat data dari Dropbox
 main_data = load_data_from_dropbox()
 
-# Pastikan kolom tanggal sudah dalam format datetime
-main_data['order_purchase_timestamp'] = pd.to_datetime(main_data['order_purchase_timestamp'], errors='coerce')
-
 # Menampilkan data beberapa baris pertama
 st.write(main_data.head())
 
@@ -27,12 +24,17 @@ st.subheader("Filter Data berdasarkan Rentang Tanggal")
 min_date = main_data['order_purchase_timestamp'].min()
 max_date = main_data['order_purchase_timestamp'].max()
 
+# Pastikan bahwa min_date dan max_date sudah dalam format datetime
+min_date = pd.to_datetime(min_date)
+max_date = pd.to_datetime(max_date)
+
 # Membuat slider untuk memilih rentang tanggal
 start_date, end_date = st.slider(
     "Pilih Rentang Tanggal:",
     min_value=min_date,
     max_value=max_date,
-    value=(min_date, max_date)
+    value=(min_date, max_date),
+    format="YYYY-MM-DD"  # Menentukan format tanggal yang diinginkan
 )
 
 # Filter data berdasarkan rentang tanggal yang dipilih
