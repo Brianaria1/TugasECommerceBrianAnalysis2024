@@ -26,16 +26,23 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 
 ---
 
+## **Fitur Filter Tanggal**
+- Dashboard ini dilengkapi dengan fitur filter tanggal yang memungkinkan pengguna untuk memilih rentang tanggal yang ingin dianalisis.
+- Rentang tanggal dapat dipilih menggunakan antarmuka **date_input** di Streamlit, yang memungkinkan pengguna untuk memilih tanggal mulai dan tanggal akhir untuk filter data.
+- Data yang ditampilkan pada dashboard akan disesuaikan dengan rentang tanggal yang dipilih, mencakup analisis kategori produk, tren penjualan, dan distribusi tipe pembayaran sesuai dengan periode yang dipilih.
+
+---
+
 ## **Cara Penggunaan**
 
 ### 1. **Persyaratan Sistem**
 - **Python 3.7 atau lebih baru**
 - Pustaka yang dibutuhkan:
-  - `streamlit`
-  - `pandas`
-  - `matplotlib`
-  - `seaborn`
-  - `numpy`
+  - `streamlit==1.24.0`
+  - `pandas==1.5.3`
+  - `matplotlib==3.7.1`
+  - `seaborn==0.11.2`
+  - `numpy==1.24.0`
 
 ### 2. **Langkah-Langkah**
 1. Clone repositori ini atau unduh file zip-nya.
@@ -83,6 +90,7 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 
 ## **Catatan**
 
+- Fitur filter tanggal memungkinkan Anda untuk memilih rentang tanggal yang ingin dianalisis. Pastikan tanggal yang dipilih sesuai dengan data yang ada dalam dataset.
 - Pastikan dataset yang digunakan memiliki struktur kolom yang sesuai dengan analisis dalam aplikasi.
 - Jika Anda mengalami kesulitan dalam mengunggah file CSV atau menemukan masalah teknis lainnya, pastikan format data Anda sesuai dengan yang dijelaskan pada bagian *Dataset*.
 
