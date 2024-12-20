@@ -21,22 +21,19 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 ### 2.2 **Tipe Pembayaran Paling Populer**
 - Menampilkan tipe pembayaran yang paling sering digunakan oleh pelanggan.
 
-### **Ringkasan Analisis**
-- Rangkuman temuan dari analisis yang dilakukan, meliputi kategori produk, tren penjualan, dan distribusi tipe pembayaran.
-
 ---
 
 ## **Fitur Filter Tanggal**
-- Dashboard ini dilengkapi dengan fitur filter tanggal yang memungkinkan pengguna untuk memilih rentang tanggal yang ingin dianalisis.
-- Rentang tanggal dapat dipilih menggunakan antarmuka **date_input** di Streamlit, yang memungkinkan pengguna untuk memilih tanggal mulai dan tanggal akhir untuk filter data.
-- Data yang ditampilkan pada dashboard akan disesuaikan dengan rentang tanggal yang dipilih, mencakup analisis kategori produk, tren penjualan, dan distribusi tipe pembayaran sesuai dengan periode yang dipilih.
+- **Interaktivitas Baru:** Pengguna harus memilih **tanggal awal** dan **tanggal akhir** secara lengkap untuk menghindari error. Jika hanya satu tanggal yang dipilih, dashboard akan memberikan pesan error dan meminta pengguna untuk menyelesaikan input rentang tanggal.
+- Rentang tanggal dapat dipilih menggunakan antarmuka **date_input** di Streamlit.
+- Data pada dashboard akan disesuaikan dengan periode yang dipilih, mencakup analisis kategori produk, tren penjualan, dan distribusi tipe pembayaran.
 
 ---
 
 ## **Cara Penggunaan**
 
 ### 1. **Persyaratan Sistem**
-- **Python 3.7 atau lebih baru**
+- **Python 3.10 atau lebih baru**
 - Pustaka yang dibutuhkan:
   - `streamlit==1.24.0`
   - `pandas==1.5.3`
@@ -81,18 +78,30 @@ Dashboard ini dirancang untuk menganalisis data e-commerce Brasil berdasarkan be
 
 ## **Teknologi yang Digunakan**
 
-- **Python**: Bahasa pemrograman utama.
+- **Python 3.10**: Bahasa pemrograman utama yang mendukung semua pustaka terbaru.
 - **Streamlit**: Untuk membangun antarmuka dashboard.
 - **Matplotlib & Seaborn**: Untuk visualisasi data.
 - **Pandas & NumPy**: Untuk manipulasi data.
 
 ---
 
+## **Fitur Tambahan**
+
+1. **Interaksi Tanggal yang Lebih Stabil**:
+   - Jika pengguna hanya memilih satu tanggal (awal atau akhir), aplikasi akan memberikan pesan error.
+   - Hal ini memastikan pengguna memilih rentang tanggal yang lengkap sebelum data difilter.
+
+2. **Visualisasi yang Lebih Informatif**:
+   - Menambahkan bar chart untuk **10 kategori produk dengan penjualan tertinggi** dan **10 kategori produk dengan penjualan terendah**.
+   - Menyediakan ringkasan tren penjualan berdasarkan tahun.
+
+---
+
 ## **Catatan**
 
-- Fitur filter tanggal memungkinkan Anda untuk memilih rentang tanggal yang ingin dianalisis. Pastikan tanggal yang dipilih sesuai dengan data yang ada dalam dataset.
-- Pastikan dataset yang digunakan memiliki struktur kolom yang sesuai dengan analisis dalam aplikasi.
-- Jika Anda mengalami kesulitan dalam mengunggah file CSV atau menemukan masalah teknis lainnya, pastikan format data Anda sesuai dengan yang dijelaskan pada bagian *Dataset*.
+- Pastikan dataset Anda memiliki struktur kolom yang sesuai dengan analisis yang dilakukan dalam aplikasi.
+- Dataset Anda harus memiliki data yang mencakup rentang tanggal yang ingin dianalisis.
+- Jika Anda mengalami kesulitan dalam mengunggah file CSV atau menemukan masalah teknis lainnya, pastikan format data sesuai dengan yang dijelaskan pada bagian *Dataset*.
 
 ---
 
@@ -104,4 +113,4 @@ Kontribusi untuk meningkatkan dashboard ini sangat diterima! Silakan buka _pull 
 
 ## **Lisensi**
 
-Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
+Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).  
