@@ -2,88 +2,114 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 # Judul aplikasi Streamlit
 st.title('Analisis E-Commerce: Penjualan Produk dan Pembayaran')
 
-# Fungsi untuk memuat data
+# Fungsi untuk memuat data dari URL Dropbox
 def load_data_from_dropbox():
     url = "https://www.dropbox.com/scl/fi/x70t1awzkxtrkztjps55n/main_data.csv?rlkey=owlw5huxhfn484maqjfnl4ssz&st=pjp7vk4j&dl=1"
     main_data = pd.read_csv(url, parse_dates=["order_purchase_timestamp"])
     return main_data
 
-# Memuat data
+# Memuat data dari Dropbox
 main_data = load_data_from_dropbox()
 
-# Filter data berdasarkan rentang tanggal
+# Menampilkan data beberapa baris pertama
+st.write(main_data.head())
+
+# Fitur interaktif: Filter berdasarkan rentang tanggal
 st.subheader("Filter Data berdasarkan Rentang Tanggal")
 min_date = main_data['order_purchase_timestamp'].min()
 max_date = main_data['order_purchase_timestamp'].max()
 
-start_date, end_date = st.slider(
+# Membuat filter rentang tanggal menggunakan date_input
+start_date, end_date = st.date_input(
     "Pilih Rentang Tanggal:",
-    min_value=min_date.to_pydatetime(),
-    max_value=max_date.to_pydatetime(),
-    value=(min_date.to_pydatetime(), max_date.to_pydatetime())
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date
 )
 
-# Filter data dengan salinan untuk menghindari SettingWithCopyWarning
+# Filter data berdasarkan rentang tanggal yang dipilih
 filtered_data = main_data[
-    (main_data['order_purchase_timestamp'] >= start_date) &
-    (main_data['order_purchase_timestamp'] <= end_date)
+    (main_data['order_purchase_timestamp'] >= pd.Timestamp(start_date)) &
+    (main_data['order_purchase_timestamp'] <= pd.Timestamp(end_date))
 ].copy()
 
-# Tambahkan kolom tahun
-filtered_data['year'] = filtered_data['order_purchase_timestamp'].dt.year
-
-# Menampilkan data hasil filter
-st.write(f"Data dari {start_date.date()} hingga {end_date.date()}:")
+st.write(f"Menampilkan data untuk rentang tanggal: {start_date} hingga {end_date}")
 st.write(filtered_data)
 
-# Analisis distribusi penjualan per tahun
-st.subheader("Distribusi Penjualan per Tahun")
-sales_per_year = filtered_data.groupby('year')['order_id'].count().reset_index()
-sales_per_year.columns = ['Year', 'Total Sales']
+# --- Analisis 1: Kategori Produk dengan Penjualan Tertinggi dan Terendah ---
+st.subheader("1.1: Penjualan Produk berdasarkan Kategori")
+category_sales = filtered_data.groupby('product_category_name')['price'].sum().sort_values(ascending=False)
 
-# Visualisasi distribusi penjualan
-fig, ax = plt.subplots()
-sns.barplot(data=sales_per_year, x='Year', y='Total Sales', ax=ax)
-ax.set_title("Distribusi Penjualan per Tahun")
-ax.set_xlabel("Tahun")
-ax.set_ylabel("Total Penjualan")
-st.pyplot(fig)
+if not category_sales.empty:
+    highest_sales_category = category_sales.head(1)
+    lowest_sales_category = category_sales.tail(1)
 
-# Analisis metode pembayaran
-st.subheader("Metode Pembayaran yang Digunakan")
-payment_method_count = filtered_data['payment_type'].value_counts().reset_index()
-payment_method_count.columns = ['Payment Method', 'Count']
+    st.write("**Kategori Produk dengan Penjualan Tertinggi:**")
+    st.write(highest_sales_category)
 
-# Visualisasi metode pembayaran
-fig, ax = plt.subplots()
-sns.barplot(data=payment_method_count, x='Count', y='Payment Method', ax=ax, palette="viridis")
-ax.set_title("Metode Pembayaran yang Digunakan")
-ax.set_xlabel("Jumlah")
-ax.set_ylabel("Metode Pembayaran")
-st.pyplot(fig)
+    st.write("**Kategori Produk dengan Penjualan Terendah:**")
+    st.write(lowest_sales_category)
 
-# Analisis kategori produk yang paling laris
-st.subheader("Kategori Produk yang Paling Laris")
-top_categories = (
-    filtered_data.groupby('product_category_name_english')['order_id']
-    .count()
-    .reset_index()
-    .sort_values(by='order_id', ascending=False)
-    .head(10)
-)
-top_categories.columns = ['Category', 'Total Orders']
+    # Membatasi jumlah kategori untuk visualisasi (10 teratas)
+    top_10_categories = category_sales.nlargest(10)
 
-# Visualisasi kategori produk
-fig, ax = plt.subplots()
-sns.barplot(data=top_categories, x='Total Orders', y='Category', ax=ax, palette="cubehelix")
-ax.set_title("10 Kategori Produk Teratas")
-ax.set_xlabel("Total Pesanan")
-ax.set_ylabel("Kategori Produk")
-st.pyplot(fig)
+    # Visualisasi
+    st.subheader("Visualisasi Penjualan Kategori Produk")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x=top_10_categories.index, y=top_10_categories.values, ax=ax, palette="viridis")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    ax.set_xlabel('Kategori Produk', fontsize=12)
+    ax.set_ylabel('Penjualan (Total Harga)', fontsize=12)
+    ax.set_title('10 Kategori Produk dengan Penjualan Tertinggi', fontsize=14)
+    st.pyplot(fig)
+else:
+    st.write("Tidak ada data yang tersedia untuk rentang tanggal yang dipilih.")
 
-# Penutup
-st.write("Dashboard ini memberikan wawasan mengenai penjualan dan pembayaran e-commerce.")
+# Analisis Tren Penjualan per Tahun
+st.subheader("1.2: Tren Penjualan Produk berdasarkan Tahun")
+filtered_data['year'] = filtered_data['order_purchase_timestamp'].dt.year
+yearly_sales = filtered_data.groupby('year')['price'].sum()
+
+if not yearly_sales.empty:
+    st.write(yearly_sales)
+
+    # Visualisasi
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.lineplot(x=yearly_sales.index, y=yearly_sales.values, ax=ax)
+    ax.set_xlabel('Tahun')
+    ax.set_ylabel('Total Penjualan (Harga)')
+    ax.set_title('Tren Penjualan Produk per Tahun')
+    st.pyplot(fig)
+else:
+    st.write("Tidak ada data yang tersedia untuk tren penjualan pada rentang tanggal yang dipilih.")
+
+# --- Analisis 2: Distribusi Tipe Pembayaran ---
+# 2.1: Distribusi tipe pembayaran
+st.subheader("2.1: Distribusi Tipe Pembayaran")
+payment_type_dist = filtered_data['payment_type'].value_counts()
+
+if not payment_type_dist.empty:
+    st.write(payment_type_dist)
+
+    # Visualisasi Distribusi Tipe Pembayaran
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x=payment_type_dist.index, y=payment_type_dist.values, ax=ax, palette="muted")
+    ax.set_xlabel('Tipe Pembayaran')
+    ax.set_ylabel('Jumlah Pesanan')
+    ax.set_title('Distribusi Tipe Pembayaran')
+    st.pyplot(fig)
+else:
+    st.write("Tidak ada data yang tersedia untuk distribusi tipe pembayaran pada rentang tanggal yang dipilih.")
+
+# 2.2: Tipe Pembayaran yang Paling Sering Digunakan
+st.subheader("2.2: Tipe Pembayaran yang Paling Sering Digunakan")
+if not payment_type_dist.empty:
+    most_common_payment_type = payment_type_dist.idxmax()
+    st.write(f"Tipe Pembayaran yang Paling Sering Digunakan: **{most_common_payment_type}**")
+else:
+    st.write("Tidak ada data yang tersedia untuk tipe pembayaran pada rentang tanggal yang dipilih.")
