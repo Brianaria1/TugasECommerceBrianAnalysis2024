@@ -32,9 +32,14 @@ start_end_date = st.date_input(
     max_value=max_date
 )
 
-# Memeriksa apakah dua nilai tanggal dikembalikan
-start_date = pd.to_datetime(start_end_date[0])  # Pastikan konversi ke datetime
-end_date = pd.to_datetime(start_end_date[1])    # Pastikan konversi ke datetime
+# Pastikan ada dua tanggal yang dipilih
+if len(start_end_date) == 2:
+    start_date = pd.to_datetime(start_end_date[0])  # Pastikan konversi ke datetime
+    end_date = pd.to_datetime(start_end_date[1])    # Pastikan konversi ke datetime
+else:
+    st.error("Pilih rentang tanggal yang valid.")
+    start_date = min_date
+    end_date = max_date
 
 # Filter data berdasarkan rentang tanggal yang dipilih
 filtered_data = main_data[
