@@ -88,7 +88,7 @@ else:
 
 # 1.2: Tren Penjualan Produk berdasarkan Tahun
 st.subheader("1.2: Tren Penjualan Produk berdasarkan Tahun")
-filtered_data.loc[:, 'year'] = filtered_data['order_purchase_timestamp'].dt.year  # Menggunakan .loc untuk menghindari SettingWithCopyWarning
+filtered_data.loc[:, 'year'] = filtered_data['order_purchase_timestamp'].dt.year
 yearly_sales = filtered_data.groupby('year')['price'].sum()
 
 if not yearly_sales.empty:
