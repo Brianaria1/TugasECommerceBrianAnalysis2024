@@ -33,8 +33,8 @@ start_end_date = st.date_input(
 )
 
 # Memeriksa apakah dua nilai tanggal dikembalikan
-start_date = start_end_date[0]
-end_date = start_end_date[1]
+start_date = pd.to_datetime(start_end_date[0])  # Pastikan konversi ke datetime
+end_date = pd.to_datetime(start_end_date[1])    # Pastikan konversi ke datetime
 
 # Filter data berdasarkan rentang tanggal yang dipilih
 filtered_data = main_data[
