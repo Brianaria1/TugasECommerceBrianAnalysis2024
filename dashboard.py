@@ -25,23 +25,28 @@ min_date = main_data['order_purchase_timestamp'].min()
 max_date = main_data['order_purchase_timestamp'].max()
 
 # Membuat filter rentang tanggal menggunakan date_input
-start_date, end_date = st.date_input(
+start_end_date = st.date_input(
     "Pilih Rentang Tanggal:",
     value=(min_date, max_date),
     min_value=min_date,
     max_value=max_date
 )
 
+# Memeriksa apakah dua nilai tanggal dikembalikan
+start_date = start_end_date[0]
+end_date = start_end_date[1]
+
 # Filter data berdasarkan rentang tanggal yang dipilih
 filtered_data = main_data[
-    (main_data['order_purchase_timestamp'] >= pd.Timestamp(start_date)) &
-    (main_data['order_purchase_timestamp'] <= pd.Timestamp(end_date))
-].copy()
+    (main_data['order_purchase_timestamp'] >= start_date) &
+    (main_data['order_purchase_timestamp'] <= end_date)
+]
 
-st.write(f"Menampilkan data untuk rentang tanggal: {start_date} hingga {end_date}")
+st.write(f"Menampilkan data untuk rentang tanggal: {start_date.date()} hingga {end_date.date()}")
 st.write(filtered_data)
 
 # --- Analisis 1: Kategori Produk dengan Penjualan Tertinggi dan Terendah ---
+# 1.1: Penjualan berdasarkan kategori produk
 st.subheader("1.1: Penjualan Produk berdasarkan Kategori")
 category_sales = filtered_data.groupby('product_category_name')['price'].sum().sort_values(ascending=False)
 
@@ -58,27 +63,33 @@ if not category_sales.empty:
     # Membatasi jumlah kategori untuk visualisasi (10 teratas)
     top_10_categories = category_sales.nlargest(10)
 
-    # Visualisasi
+    # Visualisasi 10 kategori produk dengan penjualan tertinggi
     st.subheader("Visualisasi Penjualan Kategori Produk")
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x=top_10_categories.index, y=top_10_categories.values, ax=ax, palette="viridis")
+
+    # Modifikasi tampilan
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
     ax.set_xlabel('Kategori Produk', fontsize=12)
     ax.set_ylabel('Penjualan (Total Harga)', fontsize=12)
     ax.set_title('10 Kategori Produk dengan Penjualan Tertinggi', fontsize=14)
+    ax.tick_params(axis='x', labelsize=10)
+    ax.tick_params(axis='y', labelsize=10)
+
+    # Menampilkan plot di Streamlit
     st.pyplot(fig)
 else:
     st.write("Tidak ada data yang tersedia untuk rentang tanggal yang dipilih.")
 
-# Analisis Tren Penjualan per Tahun
+# 1.2: Tren Penjualan Produk berdasarkan Tahun
 st.subheader("1.2: Tren Penjualan Produk berdasarkan Tahun")
-filtered_data['year'] = filtered_data['order_purchase_timestamp'].dt.year
+filtered_data.loc[:, 'year'] = filtered_data['order_purchase_timestamp'].dt.year  # Menggunakan .loc untuk menghindari SettingWithCopyWarning
 yearly_sales = filtered_data.groupby('year')['price'].sum()
 
 if not yearly_sales.empty:
     st.write(yearly_sales)
 
-    # Visualisasi
+    # Visualisasi Tren Penjualan Produk per Tahun
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.lineplot(x=yearly_sales.index, y=yearly_sales.values, ax=ax)
     ax.set_xlabel('Tahun')
@@ -88,7 +99,7 @@ if not yearly_sales.empty:
 else:
     st.write("Tidak ada data yang tersedia untuk tren penjualan pada rentang tanggal yang dipilih.")
 
-# --- Analisis 2: Distribusi Tipe Pembayaran ---
+# --- Analisis 2: Distribusi Tipe Pembayaran pada Pesanan ---
 # 2.1: Distribusi tipe pembayaran
 st.subheader("2.1: Distribusi Tipe Pembayaran")
 payment_type_dist = filtered_data['payment_type'].value_counts()
